@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from sqlalchemy import text
 from app.db.session import engine
+from app.api.v1.routers.documents import router
+
 
 # To się wykonuje RAZ przy starcie aplikacji
 @asynccontextmanager
@@ -15,9 +17,12 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"BŁĄD! Nie można połączyć z bazą: {e}")
     yield
-    print("--- ZAMYKAM APLIKACJĘ ---")
+    print("ZAMYKAM APLIKACJĘ")
+
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(router=router, prefix="/api/v1/documents", tags=["documents"])
+
 
 @app.get("/")
 def read_root():
